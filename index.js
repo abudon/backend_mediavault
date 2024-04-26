@@ -22,18 +22,18 @@ const {existsSync, createReadStream} = require("fs");
 
 
 // VARIABLES
-const port = process.env.PORT || 8000
+const port = process.env.PORT || 3000
 
 
 // CREATING EXPRESS APPLICATION
 
-const App = express();
+const Index = express();
 
 // MIDDLEWARE
-App.use(bodyParser.json()); // Parse JSON requests
-App.use(cors()); // Enable CORS
-App.use(morgan('dev')); // Logging HTTP requests
-App.use(express.json());
+Index.use(bodyParser.json()); // Parse JSON requests
+Index.use(cors()); // Enable CORS
+Index.use(morgan('dev')); // Logging HTTP requests
+Index.use(express.json());
 
 // STORAGE SET UP
 const storage = multer.diskStorage({
@@ -52,7 +52,7 @@ const upload = multer({ storage: storage });
 
 
 // CREATE NOTIFICATIONS FOR USERS
-App.post('/notifications', async (req, res) => {
+Index.post('/notifications', async (req, res) => {
     try {
         const { userId, message } = req.body; // Get the user ID and notification data from the request body
 
@@ -75,7 +75,7 @@ App.post('/notifications', async (req, res) => {
 
 //READ NOTIFICATIONS FOR USERS
 
-App.get('/notifications/:userId', async (req, res) => {
+Index.get('/notifications/:userId', async (req, res) => {
     try {
         const { userId } = req.params; // Get the user ID from the request parameters
 
@@ -104,7 +104,7 @@ App.get('/notifications/:userId', async (req, res) => {
 
 
 
-App.post('/booking-list', async (req, res) => {
+Index.post('/booking-list', async (req, res) => {
     try {
         // Extract booking data from the request body
         const { userId, bookingData } = req.body;
@@ -140,7 +140,7 @@ App.post('/booking-list', async (req, res) => {
 
 
 // Endpoint to get the booking list for a specific user
-App.get('/booking-list/:userId', async (req, res) => {
+Index.get('/booking-list/:userId', async (req, res) => {
     try {
         const userId = req.params.userId;
 
@@ -160,7 +160,7 @@ App.get('/booking-list/:userId', async (req, res) => {
 
 // GET BOOKING LIST FROM TABLE
 
-App.get('/booking-list',async (req, res) => {
+Index.get('/booking-list',async (req, res) => {
     try {
         // Query the database to fetch all booking lists
         const bookingLists = await BookingList.findAll({
@@ -182,7 +182,7 @@ App.get('/booking-list',async (req, res) => {
 })
 
 // UPDATING BY BOOKING ID
-App.put('/booking-list/:id', async (req, res) => {
+Index.put('/booking-list/:id', async (req, res) => {
     const bookingId = req.params.id;
     const { booking_status } = req.body; // Assuming you want to update the booking status
 
@@ -214,7 +214,7 @@ App.put('/booking-list/:id', async (req, res) => {
 
 // ENDPOINT TO DOWNLOAD IMAGES ASSOCIATED WITH A USER ID
 
-App.get('/download/:user_id', async (req, res) =>{
+Index.get('/download/:user_id', async (req, res) =>{
     try {
         // Extract user ID from request parameters
         const { user_id } = req.params;
@@ -244,7 +244,7 @@ App.get('/download/:user_id', async (req, res) =>{
 })
 
 // ENDPOINT TO DOWNLOAD A SPECIFIC IMAGE ASSOCIATED WITH A USER ID
-App.get('/api/images/download/:user_id/:image_id', async (req, res) => {
+Index.get('/api/images/download/:user_id/:image_id', async (req, res) => {
     try {
         // Extract user ID and image ID from request parameters
         const { user_id, image_id } = req.params;
@@ -305,7 +305,7 @@ const getContentType = (filePath) => {
 
 
 // Handle POST request for file upload
-App.post('/upload/:user_id', upload.single('file'), async (req, res) => {
+Index.post('/upload/:user_id', upload.single('file'), async (req, res) => {
     try {
         const userId = req.params.user_id;
         const filePath = join(__dirname, 'uploads', req.file.filename); // Get the file path of the uploaded file
@@ -330,7 +330,7 @@ App.post('/upload/:user_id', upload.single('file'), async (req, res) => {
 });
 
 // GET IMAGE BY ID
-App.get('/images/:user_id', async (req, res) => {
+Index.get('/images/:user_id', async (req, res) => {
     try {
         const userId = req.params.user_id;
         const images = await Image.findAll({ where: { user_id: userId } });
@@ -347,7 +347,7 @@ App.get('/images/:user_id', async (req, res) => {
 });
 
 // DELETING INDIVIDUAL IMAGES
-App.delete('/images/:imageId', async (req, res) => {
+Index.delete('/images/:imageId', async (req, res) => {
     try {
         // Extract the image ID from the request parameters
         const imageId = req.params.imageId;
@@ -370,7 +370,7 @@ App.delete('/images/:imageId', async (req, res) => {
 
 
 // POST ENDPOINT FOR UPLOADING MULTIPLE FILES TO THE GALLERY
-App.post('/gallery/upload', upload.array('files'), async (req, res) => {
+Index.post('/gallery/upload', upload.array('files'), async (req, res) => {
     try {
         const files = req.files; // Array of uploaded files
 
@@ -402,7 +402,7 @@ App.post('/gallery/upload', upload.array('files'), async (req, res) => {
 
 
 // GET REQUEST FOR ALL GALLERY IMAGE
-App.get('/gallery', async (req, res) => {
+Index.get('/gallery', async (req, res) => {
     try {
         // Fetch all gallery items from the database
         const galleryItems = await Gallery.findAll();
@@ -422,7 +422,7 @@ App.get('/gallery', async (req, res) => {
 
 
 
-App.get('/gallery/:id', async (req, res) => {
+Index.get('/gallery/:id', async (req, res) => {
     try {
         // Extract user ID and image ID from request parameters
         const { id } = req.params;
@@ -465,7 +465,7 @@ App.get('/gallery/:id', async (req, res) => {
 
 
 
-App.post('/signup', async (req, res)=>{
+Index.post('/signup', async (req, res)=>{
     try {
         const {username, email, password, role} = req.body;
         console.log(req.body)
@@ -478,7 +478,7 @@ App.post('/signup', async (req, res)=>{
     }
 })
 
-App.post('/signin', async (req, res) => {
+Index.post('/signin', async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -502,7 +502,7 @@ App.post('/signin', async (req, res) => {
 });
 
 // Define the route to fetch users
-App.get('/users', async (req, res) => {
+Index.get('/users', async (req, res) => {
     try {
         // Fetch all users from the database
         const users = await User.findAll();
@@ -520,7 +520,7 @@ App.get('/users', async (req, res) => {
     }
 });
 
-App.post('/getuser',async (req, res) => {
+Index.post('/getuser',async (req, res) => {
     try {
         const {user_id} = req.body
         const user = await User.findByPk(user_id)
@@ -536,7 +536,7 @@ App.post('/getuser',async (req, res) => {
     }
 })
 
-App.put('/users/:user_id', async (req, res) => {
+Index.put('/users/:user_id', async (req, res) => {
     const user_id = req.params.user_id
     const updatedUserData =req.body
 
@@ -555,7 +555,7 @@ App.put('/users/:user_id', async (req, res) => {
 })
 
 // REMOVING USER FROM DATABASE
-App.delete('/users/:user_id', async (req, res) => {
+Index.delete('/users/:user_id', async (req, res) => {
     try {
         const userId = req.params.user_id;
 
@@ -575,7 +575,7 @@ App.delete('/users/:user_id', async (req, res) => {
 });
 
 // ERROR HANDLING MIDDLEWARE
-App.use((err, req, res, next)=>{
+Index.use((err, req, res, next)=>{
     console.error(err.stack);
     res.status(500).send("Something went Wrong")
 })
@@ -602,7 +602,7 @@ async function syncModels(){
 
 async function startServer() {
     await syncModels();
-    App.listen(port, () => {
+    Index.listen(port, () => {
         console.log(`Server is running on port ${port}`);
     });
 }
