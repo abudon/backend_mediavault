@@ -1,9 +1,9 @@
 const {Sequelize} = require('sequelize');
 
 
-const sequelize = new Sequelize('database_photoworld', 'root', '', {
-    host: 'localhost',
-    port: '3306',
+const sequelize = new Sequelize('railway', 'root', 'OKExvoHcyLaXYfIOjoPHiuagojGYHOUZ', {
+    host: 'monorail.proxy.rlwy.net',
+    port: '45576',
     dialect: 'mysql',
     logging: false
 } )
