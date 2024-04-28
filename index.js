@@ -308,12 +308,11 @@ const getContentType = (filePath) => {
 Index.post('/upload/:user_id', upload.single('file'), async (req, res) => {
     try {
         const userId = req.params.user_id;
-        const filePath = join(__dirname, 'uploads', req.file.filename); // Get the file path of the uploaded file
 
         if (!req.file) {
             return res.status(400).json({error: 'No file uploaded'});
         }
-
+        const filePath = join(__dirname, 'uploads', req.file.filename); // Get the file path of the uploaded file
         const imagePath = req.file.path;
         const imageName = req.file.originalname;
         const newImage = await Image.create({
