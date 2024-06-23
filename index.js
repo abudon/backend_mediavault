@@ -293,6 +293,13 @@ const getContentType = (filePath) => {
             return 'image/gif';
         case '.mp4':
             return 'video/mp4';
+        case '.avi':
+            return 'video/avi';
+        case '.mkv':
+            return 'video/mkv';
+        case '.mov':
+            return 'video/mov'
+
         // Add more cases for other image and video file types if needed
         default:
             return 'application/octet-stream'; // Default to binary data if file type is not recognized
@@ -305,22 +312,29 @@ const getContentType = (filePath) => {
 
 
 // Handle POST request for file upload
-Index.post('/upload/:user_id', upload.single('file'), async (req, res) => {
+Index.post('/upload/:user_id', upload.array('file'), async (req, res) => {
     try {
         const userId = req.params.user_id;
 
-        if (!req.file) {
-            return res.status(400).json({error: 'No file uploaded'});
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: 'No files uploaded' });
         }
-        const filePath = join(__dirname, 'uploads', req.file.filename); // Get the file path of the uploaded file
-        const imagePath = req.file.path;
-        const imageName = req.file.originalname;
-        const newImage = await Image.create({
-            image_name: imageName,
-            file_path: imagePath,
-            user_id: userId
-        });
-        res.status(200).json({ message: 'File uploaded successfully', image: newImage });
+
+        const uploadedFiles = [];
+        for (const file of req.files) {
+            const filePath = join(__dirname, 'uploads', file.filename); // Get the file path of the uploaded file
+            const imagePath = file.path;
+            const imageName = file.originalname;
+            const newImage = await Image.create({
+                image_name: imageName,
+                file_path: imagePath,
+                user_id: userId
+            });
+            uploadedFiles.push(newImage);
+        }
+
+        res.status(200).json({ message: 'Files uploaded successfully', images: uploadedFiles });
+
 
     } catch (error) {
         console.error('Error uploading file:', error);
