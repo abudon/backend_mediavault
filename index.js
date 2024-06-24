@@ -17,7 +17,7 @@ const {params, body} = require("express/lib/request");
 const {status} = require("express/lib/response");
 const multer = require("multer");
 const {join, extname} = require("path");
-const {existsSync, createReadStream} = require("fs");
+const {existsSync, createReadStream, unlinkSync} = require("fs");
 
 
 
@@ -280,7 +280,7 @@ Index.get('/api/images/download/:user_id/:image_id', async (req, res) => {
 })
 
 
-// Function to determine the content type based on file extension
+// Function to determine the content type based on a file extension
 const getContentType = (filePath) => {
     const ext = extname(filePath).toLowerCase();
     switch (ext) {
@@ -302,7 +302,7 @@ const getContentType = (filePath) => {
 
         // Add more cases for other image and video file types if needed
         default:
-            return 'application/octet-stream'; // Default to binary data if file type is not recognized
+            return 'application/octet-stream'; // Default to binary data if a file type is not recognized
     }
 };
 
@@ -382,6 +382,8 @@ Index.delete('/images/:imageId', async (req, res) => {
 });
 
 
+
+
 // POST ENDPOINT FOR UPLOADING MULTIPLE FILES TO THE GALLERY
 Index.post('/gallery/upload', upload.array('files'), async (req, res) => {
     try {
@@ -434,7 +436,7 @@ Index.get('/gallery', async (req, res) => {
 });
 
 
-
+//GET REQUEST FOR DOWNLOADING AND STREAMING FILE FOR GALLERY
 Index.get('/gallery/:id', async (req, res) => {
     try {
         // Extract user ID and image ID from request parameters
@@ -470,6 +472,35 @@ Index.get('/gallery/:id', async (req, res) => {
     }
 })
 
+// DELETE REQUEST FOR REMOVING A FILE FROM THE GALLERY
+Index.delete('/gallery/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Find the image by ID
+        const image = await Gallery.findOne({ where: { id } });
+
+        if (!image) {
+            return res.status(404).json({ error: 'Image not found' });
+        }
+
+        // Get the file path
+        const filePath = image.file_path;
+
+        // Check if the file exists and delete it
+        if (existsSync(filePath)) {
+            unlinkSync(filePath);
+        }
+
+        // Delete the image record from the database
+        await Gallery.destroy({ where: { id } });
+
+        res.status(200).json({ message: 'File deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting file:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 
 
@@ -477,6 +508,7 @@ Index.get('/gallery/:id', async (req, res) => {
 
 
 
+//AUTHENTICATIONS
 
 Index.post('/signup', async (req, res)=>{
     try {
