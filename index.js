@@ -1,11 +1,10 @@
-
+// REQUIRED FILE FOR ENVIRONMENT VARIABLE
+require('dotenv').config()
 // IMPORT ALL REQUIRED MODULES
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
-const sequelize = require('./database/connection.js')
-const userRoutes = require('./routes/userRoutes.js')
 const User = require('./models/usersModel.js')
 const Image = require('./models/imageModel.js')
 const BookingList = require('./models/bookingListModel.js')
@@ -22,7 +21,7 @@ const {existsSync, createReadStream, unlinkSync} = require("fs");
 
 
 // VARIABLES
-const port = process.env.PORT || 3000
+const port = process.env.PORT
 
 
 // CREATING EXPRESS APPLICATION
@@ -298,7 +297,7 @@ const getContentType = (filePath) => {
         case '.mkv':
             return 'video/mkv';
         case '.mov':
-            return 'video/mov'
+            return 'video/quicktime'
 
         // Add more cases for other image and video file types if needed
         default:
