@@ -618,6 +618,12 @@ Index.delete('/users/:user_id', async (req, res) => {
     }
 });
 
+
+// TESTING PAGE
+Index.get('/', (req, res) => {
+    res.send('Welcome to the API Server');
+});
+
 // ERROR HANDLING MIDDLEWARE
 Index.use((err, req, res, next)=>{
     console.error(err.stack);
