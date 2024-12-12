@@ -311,7 +311,7 @@ const getContentType = (filePath) => {
 
 
 // Handle POST request for file upload
-Index.post('/upload/:user_id', upload.array('file'), async (req, res) => {
+Index.post('/upload/:user_id', upload.array('files'), async (req, res) => {
     try {
         const userId = req.params.user_id;
 
