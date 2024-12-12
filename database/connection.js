@@ -19,11 +19,12 @@ const sequelize = new Sequelize(db_name, db_user, db_password, {
     dialect: 'postgres',
     logging: false,
     dialectModule:pg,
-    timezone:process.env.TZ,
-    define: {
-        charset: 'utf8mb4',
-        collate: 'utf8mb4_unicode_ci'  // Set collation to support emojis
-    }
+    dialectOptions:{
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
+        }
+    },
 } )
 
 ///////////// CALLS AND LISTENERS ///////////////////
