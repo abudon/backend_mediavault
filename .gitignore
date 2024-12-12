@@ -1,0 +1,31 @@
+# Dependency directories
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Runtime files
+*.pid
+*.seed
+*.pid.lock
+
+# Env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel build output
+.vercel/
+
+# Build outputs
+dist/
+build/
+
+# IDE files
+.idea/
+.vscode/
+.DS_Store
