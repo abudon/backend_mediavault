@@ -659,3 +659,5 @@ async function startServer() {
 }
 
 startServer().then(()=>console.log('successfully started')).catch(e=>console.error(e));
+
+module.exports = Index;
