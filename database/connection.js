@@ -1,5 +1,8 @@
 ///////////// IMPORTS ///////////////////
 const {Sequelize} = require('sequelize');
+const pg = require('pg');
+
+
 ///////////// VARIABLES ///////////////////
 
 const db_name = process.env.DATABASE_NAME;
@@ -14,7 +17,13 @@ const sequelize = new Sequelize(db_name, db_user, db_password, {
     host: databaseUrl,
     port: db_port,
     dialect: 'postgres',
-    logging: false
+    logging: false,
+    dialectModule:pg,
+    timezone:process.env.TZ,
+    define: {
+        charset: 'utf8mb4',
+        collate: 'utf8mb4_unicode_ci'  // Set collation to support emojis
+    }
 } )
 
 ///////////// CALLS AND LISTENERS ///////////////////
