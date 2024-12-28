@@ -1,75 +1,68 @@
-// Import Sequelize and the connection instance
-const { DataTypes } = require('sequelize');
-const sequelize = require('../database/connection');
-const User = require('./usersModel');
-
-// Define the BookingList model
-const BookingList = sequelize.define('BookingList', {
-    // Define attributes of the booking list
-    customer_name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    phone_number: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    home_address: {
-        type: DataTypes.TEXT,
-        allowNull: false
-    },
-
-    booking_datetime: {
-        type: DataTypes.DATE,
-        allowNull: false
-    },
-    session_type: {
-        type: DataTypes.STRING
-    },
-    specific_requirements: {
-        type: DataTypes.TEXT
-    },
-
-    booking_status: {
-        type: DataTypes.ENUM('confirmed', 'pending', 'canceled'),
-        defaultValue: "pending",
-        allowNull: false
+// Import required modules
+const Booking = require('../database/migrations/create_booking_table');
+const User = require('../database/migrations/create_users_table');
 
 
-    },
-    payment_status: {
-        type: DataTypes.ENUM('paid', 'pending'),
-        defaultValue: "pending",
-        allowNull: false
-    },
-    additional_notes: {
-        type: DataTypes.TEXT
-    },
-    // New attributes
-    start_time: {
-        type: DataTypes.TIME,
-        allowNull: false
-    },
-    end_time: {
-        type: DataTypes.TIME,
-        allowNull: false
+class BookingService {
+    // Method to create a new booking
+    async create(bookingData)
+    {
+        try {
+            // Validate the booking data
+            // Implement logic to create a new booking in the database
+            const newBooking = await Booking.create(bookingData);
+            return newBooking;
+        } catch (error) {
+            throw new Error(`Failed to create booking: ${error}`);
+        }
     }
-}, {
-    // Define additional options
-    tableName: 'booking_lists', // Set the table name
-    timestamps: true, // Enable timestamps (createdAt, updatedAt)
-    createdAt: 'created_at', // Customize the name of the createdAt column
-    updatedAt: 'updated_at' // Customize the name of the updatedAt column
-});
 
-// Define associations
-BookingList.belongsTo(User, { foreignKey: 'user_id' }); // Associate each booking list with a user
+    // Method to fetch all bookings for specific user
+    async find(id)
+    {
+        try {
+            // Fetch all bookings for the specified user from the database
+            const bookings = await Booking.findAll({ where: { user_id: id } });
+            return bookings;
+        }catch (e) {
 
-// Sync the model with the database
+        }
+    }
 
+    // Method to find all bookings
+    async findAll()
+    {
+        try {
+            // Fetch all bookings from the database
+            const bookings = await Booking.findAll({
+                include: {
+                    model: User, // Include the User model
+                    attributes: ['username'], // Include only the username attribute from the User model
+                    as: 'user' // Alias for the joined user data
+                }
+            });
+            return bookings;
+        } catch (error) {
+            throw new Error(`Failed to fetch all bookings: ${error}`);
+        }
+    }
 
-module.exports = BookingList;
+    // Method to update a booking
+    async update(id, updates)
+    {
+        try {
+            // Fetch the booking to be updated
+            const booking = await Booking.findByPk(id);
+            if (!booking) {
+                throw new Error('Booking not found');
+            }
+            // Update the booking in the database
+            booking.booking_status = updates
+            await booking.save()
+            return booking;
+        } catch (error) {
+            throw new Error(`Failed to update booking: ${error}`);
+        }
+    }
+}
+module.exports = BookingService;

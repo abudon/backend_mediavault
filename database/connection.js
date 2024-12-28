@@ -20,7 +20,8 @@ const sequelize = new Sequelize(db_name, db_user, db_password, {
     logging: false,
     dialectModule:pg,
     dialectOptions:{
-        ssl: {
+        ssl:
+            {
             require: true,
             rejectUnauthorized: false
         }

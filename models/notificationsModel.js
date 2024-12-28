@@ -1,27 +1,36 @@
-// Import Sequelize and the connection instance
-const { DataTypes } = require('sequelize');
-const sequelize = require('../database/connection');
-const User = require('./usersModel');
-
-// Define the BookingList model
-const Notifications = sequelize.define('Notifications', {
-    // Define attributes of the booking list
-    messages: {
-        type: DataTypes.TEXT,
-        allowNull: false
-    },
-}, {
-    // Define additional options
-    tableName: 'notifications', // Set the table name
-    timestamps: true, // Enable timestamps (createdAt, updatedAt)
-    createdAt: 'created_at', // Customize the name of the createdAt column
-    updatedAt: 'updated_at' // Customize the name of the updatedAt column
-});
-
-// Define associations
-Notifications.belongsTo(User, { foreignKey: 'user_id' }); // Associate each notification with a user
-
-// Sync the model with the database
+const Notifications = require('../database/migrations/create_notifications_table')
 
 
-module.exports = Notifications;
+class NotificationsModel {
+
+    // Method to create a user's notification
+    async create(notificationData)
+    {
+        try {
+            // Create a new notification in the database
+            const notification = await Notifications.create(notificationData);
+
+            console.log('Notification created:', notification.toJSON());
+            return notification; // Return the created notification object
+        } catch (e) {
+            console.error('Something went wrong on the database',e)
+        }
+    }
+
+    // Method to get all notifications for a specific user
+    async findAll(userId)
+    {
+        try {
+            // Query the database to fetch all notifications for the specified user
+            const notifications = await Notifications.findAll({where: {user_id: userId}});
+
+            console.log('Notifications fetched:', notifications.map(notification => notification.toJSON()));
+            return notifications; // Return the fetched notifications array
+        } catch (e) {
+            console.error('Something went wrong on the database',e)
+        }
+    }
+
+}
+
+module.exports = NotificationsModel;

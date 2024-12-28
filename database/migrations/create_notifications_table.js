@@ -1,47 +1,27 @@
-const sequelize = require('../connection')
-const { DataTypes } = require('sequelize')
+// Import Sequelize and the connection instance
+const { DataTypes } = require('sequelize');
+const sequelize = require('../connection');
+const User = require('./create_users_table');
 
-
-const usersAttributes = {
-    id:{
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-    },
-    username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    password: {
-        type: DataTypes.STRING,
+// Define the BookingList model
+const Notifications = sequelize.define('notifications', {
+    // Define attributes of the booking list
+    messages: {
+        type: DataTypes.TEXT,
         allowNull: false
     },
-    role: {
-        type: DataTypes.ENUM('admin', 'user'),
-        defaultValue: 'user'
-    },
-    paymentStatus: {
-        type: DataTypes.ENUM('pending', 'paid'),
-        defaultValue: 'pending'
-    }
-}
-
-
-
-
-
-const User = sequelize.define('users',usersAttributes,{
-    tableName: 'users',
-    timestamps: true,
-    createdAt: 'created_at',
-    updatedAt: 'updated_at'
+}, {
+    // Define additional options
+    tableName: 'notifications', // Set the table name
+    timestamps: true, // Enable timestamps (createdAt, updatedAt)
+    createdAt: 'created_at', // Customize the name of the createdAt column
+    updatedAt: 'updated_at' // Customize the name of the updatedAt column
 });
 
-module.exports = User
+// Define associations
+Notifications.belongsTo(User, { foreignKey: 'user_id' }); // Associate each notification with a user
+
+// Sync the model with the database
+
+
+module.exports = Notifications;

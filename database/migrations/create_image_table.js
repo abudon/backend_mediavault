@@ -1,47 +1,23 @@
-const sequelize = require('../connection')
-const { DataTypes } = require('sequelize')
+const sequelize = require('../connection');
+const {DataTypes} = require('sequelize');
+const User = require('./create_users_table')
 
-
-const usersAttributes = {
-    id:{
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-    },
-    username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    password: {
+const Image = sequelize.define('image',{
+    image_name: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    role: {
-        type: DataTypes.ENUM('admin', 'user'),
-        defaultValue: 'user'
-    },
-    paymentStatus: {
-        type: DataTypes.ENUM('pending', 'paid'),
-        defaultValue: 'pending'
+    file_path: {
+        type: DataTypes.STRING,
+        allowNull: false
     }
-}
 
-
-
-
-
-const User = sequelize.define('users',usersAttributes,{
-    tableName: 'users',
+}, {
+    tableName: 'images',
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at'
-});
+})
+Image.belongsTo(User,{foreignKey:'user_id'})
 
-module.exports = User
+module.exports = Image

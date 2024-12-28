@@ -1,26 +1,84 @@
-const sequelize = require('../database/connection.js');
-const {DataTypes} = require('sequelize');
-const User = require('./usersModel.js')
+// Import Requirements
+const Image = require('../database/migrations/create_image_table')
 
-const Image = sequelize.define('Image',{
-    image_name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    file_path: {
-        type: DataTypes.STRING,
-        allowNull: false
+class ImageModel {
+
+
+    // Method for creating image
+    async create(props)
+    {
+        try {
+            const image = await Image.create(props)
+            if (image){
+                console.log('Image Successfully Created')
+                return image
+            }else {
+                console.error('Error Creating Image:')
+                return null
+            }
+        }catch (e) {
+            console.log('Error From Database',e)
+        }
+
     }
 
-}, {
-    tableName: 'images',
-    timestamps: true,
-    createdAt: 'created_at',
-    updatedAt: 'updated_at'
-})
+    // Method for fetching image
+    async findAll(id)
+    {
+        try {
+            const images = await Image.findAll({
+                where: { user_id: id }
+            })
+            if (images.length > 0){
+                console.log('Images Successfully fetched')
+                return images
+            }else {
+                console.error('Error Fetching Images:')
+                return null
+            }
+        }catch (e) {
+            console.error("Cannot Fetch Images From Database",e)
+        }
 
-Image.belongsTo(User,{foreignKey:'user_id'})
-Image.sync().then(
-    ()=>console.log("table created successfully")
-).catch(e=>console.error(e))
-module.exports = Image
+    }
+
+    // Method for deleting image
+    async delete(id)
+    {
+        try {
+            const image = await Image.findByPk(id)
+            if (image){
+                await image.destroy()
+                console.log('Image Successfully Deleted')
+                return true
+            } else {
+                console.error('Error Deleting Image:')
+                return false
+            }
+        }catch (e) {
+            console.error('Error Deleting Image From Database',e)
+        }
+    }
+
+    // Method for getting particular image for a particular user
+    async findById(id, userId)
+    {
+        try {
+            const image = await Image.findOne({
+                where: { id: id, user_id: userId }
+            })
+            if (image){
+                console.log('Image Successfully fetched')
+                return image
+            } else {
+                console.error('Error Fetching Image:')
+                return null
+            }
+        }catch (e) {
+            console.error('Error Fetching Image From Database',e)
+        }
+    }
+
+}
+
+module.exports = ImageModel;

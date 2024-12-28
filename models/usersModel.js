@@ -1,48 +1,102 @@
+// Import required modules
+const User = require('../database/migrations/create_users_table')
 
-const sequelize = require('../database/connection.js')
-const { DataTypes } = require('sequelize')
+class UsersModel {
+    async create(props){
+     try {
+         const users = await User.create(props)
+         console.log('User created:', users.toJSON());
+         return users
+     } catch (e) {
+         console.error('Error creating user:', e);
+         return null; // Return null to indicate an error
+     }
+    }
 
+    // Find a specific user by email and password
+    async find(email, password){
+        try {
+            const user = await User.findOne({ where: { email, password } });
+            if (user){
+                console.log('User found:', user.toJSON());
+                return user;
+            }else {
+                console.log('User not found');
+                return null;
+            }
 
-const usersObject = {
-    id:{
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-    },
-    username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    role: {
-        type: DataTypes.ENUM('admin', 'user'),
-        defaultValue: 'user'
-    },
-    paymentStatus: {
-        type: DataTypes.ENUM('pending', 'paid'),
-        defaultValue: 'pending'
+        } catch (e) {
+            console.error('Error finding user:', e);
+            throw e; // Throw the error for handling at a higher level
+        }
+    }
+
+    // get all users
+    async all(){
+        try {
+            const users = await User.findAll();
+            console.log('Users fetched:', users.map(user => user.toJSON()));
+            return users;
+        } catch (e) {
+            console.error('Error fetching users:', e);
+            throw e; // Throw the error for handling at a higher level
+        }
+    }
+
+    // Find user by id
+    async findById(id){
+        try {
+            const user = await User.findByPk(id);
+            if (user){
+                console.log('User found:', user.toJSON());
+                return user;
+            } else {
+                console.log('User not found');
+                return null;
+            }
+        } catch (e) {
+            console.error('Error finding user:', e);
+            throw e; // Throw the error for handling at a higher level
+        }
+    }
+
+    // Update user by id
+    async update(id, updates)
+    {
+        try {
+            const user = await User.findByPk(id);
+            if (user) {
+                await user.update(updates);
+                console.log('User updated:', user.toJSON());
+                return user;
+            } else {
+                console.log('User not found.');
+                return null;
+            }
+        } catch (e) {
+            console.error('Error updating user:', e);
+            throw e; // Throw the error for handling at a higher level
+        }
+    }
+
+    // Delete user by id
+    async destroy(id)
+    {
+        try {
+            const user = await User.findByPk(id);
+            if (user) {
+                await user.destroy();
+                console.log('User deleted:', user.toJSON());
+                return true;
+            } else {
+                console.log('User not found.');
+                return false;
+            }
+        } catch (e) {
+            console.error('Error deleting user:', e);
+            throw e; // Throw the error for handling at a higher level
+        }
     }
 }
 
-
-
-
-
-const User = sequelize.define('users',usersObject,{
-    tableName: 'users',
-    timestamps: true,
-    createdAt: 'created_at',
-    updatedAt: 'updated_at'
-});
-
-module.exports = User
+module.exports=UsersModel;

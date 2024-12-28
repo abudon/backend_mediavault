@@ -1,8 +1,7 @@
-const sequelize = require('../connection');
-const {DataTypes} = require('sequelize');
-const User = require('./create_users_table')
+const sequelize = require('../connection.js');
+const { DataTypes } = require('sequelize');
 
-const Image = sequelize.define('image',{
+const Gallery = sequelize.define('Gallery', {
     image_name: {
         type: DataTypes.STRING,
         allowNull: false
@@ -10,14 +9,15 @@ const Image = sequelize.define('image',{
     file_path: {
         type: DataTypes.STRING,
         allowNull: false
-    }
+    },
 
 }, {
-    tableName: 'images',
+    tableName: 'gallery',
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at'
-})
-Image.belongsTo(User,{foreignKey:'user_id'})
+});
 
-module.exports = Image
+
+
+module.exports = Gallery;
