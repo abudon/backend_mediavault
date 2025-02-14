@@ -1,6 +1,6 @@
 ///////////// IMPORTS ///////////////////
 const {Sequelize} = require('sequelize');
-const pg = require('pg');
+const mysql2 = require('mysql2');
 
 
 ///////////// VARIABLES ///////////////////
@@ -16,15 +16,15 @@ const db_port = process.env.DATABASE_PORT
 const sequelize = new Sequelize(db_name, db_user, db_password, {
     host: databaseUrl,
     port: db_port,
-    dialect: 'postgres',
+    dialect: 'mysql',
     logging: false,
-    dialectModule:pg,
+    dialectModule:mysql2,
     dialectOptions:{
-        ssl:
-            {
-            require: true,
-            rejectUnauthorized: false
-        }
+        ssl: false
+        //     {
+        //     require: true,
+        //     rejectUnauthorized: false
+        // }
     },
 } )
 
